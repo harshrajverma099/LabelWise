@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,23 +11,29 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!process.env.OPENAI_API_KEY) {
+    if (!process.env.GEMINI_API_KEY) {
       return NextResponse.json(
-        { error: "OPENAI_API_KEY not configured. Add it to .env.local" },
+        { error: "GEMINI_API_KEY not configured. Add it to .env.local" },
         { status: 500 }
       );
     }
 
-    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        {
-          role: "user",
-          content: [
-            {
-              type: "text",
-              text: `You are a nutrition label analyst. Analyze this product label image and extract the nutritional information. Return ONLY valid JSON in this exact format, no other text:
+    // Parse data URL into base64 and mime type for Gemini
+    const [header, base64Data] = image.split(",");
+    const mimeMatch = header?.match(/data:(.*?);base64/);
+    const mimeType = mimeMatch?.[1] || "image/png";
+    if (!base64Data) {
+      return NextResponse.json(
+        { error: "Invalid image format. Try another image." },
+        { status: 400 }
+      );
+    }
+
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+
+    const prompt = `You are a nutrition label analyst. Analyze this product label image and extract the nutritional information.
+Return ONLY valid JSON in this exact format, with no extra text, code fences, or explanation:
 {
   "productName": "string (product name, use format like BRAND :: FLAVOR)",
   "servingSize": "string (e.g. 60g (1 bar) or 240ml (1 cup))",
@@ -42,19 +48,19 @@ export async function POST(req: NextRequest) {
   "sodium": number,
   "cholesterol": number
 }
-Use 0 for any value you cannot find. Be accurate with numbers from the label.`,
-            },
-            {
-              type: "image_url",
-              image_url: { url: image },
-            },
-          ],
-        },
-      ],
-      max_tokens: 500,
-    });
+Use 0 for any value you cannot find. Be accurate with numbers from the label.`;
 
-    const content = response.choices[0]?.message?.content?.trim();
+    const geminiResult = await model.generateContent([
+      { text: prompt },
+      {
+        inlineData: {
+          mimeType,
+          data: base64Data,
+        },
+      },
+    ]);
+
+    const content = geminiResult.response.text().trim();
     if (!content) {
       return NextResponse.json(
         { error: "No response from AI" },
@@ -103,7 +109,7 @@ Use 0 for any value you cannot find. Be accurate with numbers from the label.`,
     const status = errObj?.status;
     const msg = (errObj?.message || err instanceof Error ? (err as Error).message : "")?.toLowerCase();
     if (status === 401 || msg?.includes("invalid") || msg?.includes("incorrect api key")) {
-      message = "Invalid API key. Add OPENAI_API_KEY in Vercel → Settings → Environment Variables, then redeploy.";
+      message = "Invalid API key. Add GEMINI_API_KEY in Vercel → Settings → Environment Variables, then redeploy.";
     } else if (status === 429 || msg?.includes("rate")) {
       message = "Rate limit exceeded. Wait a moment and try again.";
     } else if (status === 413 || msg?.includes("413")) {
