@@ -495,9 +495,9 @@ export function LabelScanner() {
                   {error}
                 </p>
                 <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                  Local: add OPENAI_API_KEY to .env.local and restart the dev server (pnpm dev).
+                  Local: ensure GEMINI_API_KEY is set in .env.local and restart the dev server (pnpm dev).
                   <br />
-                  Vercel: add OPENAI_API_KEY in Project Settings → Environment Variables, then redeploy.
+                  Vercel: ensure GEMINI_API_KEY is set in Project Settings → Environment Variables, then redeploy.
                 </p>
               </div>
             ) : !result ? (
