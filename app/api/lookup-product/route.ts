@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,9 +13,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!process.env.OPENAI_API_KEY) {
+    if (!process.env.GEMINI_API_KEY) {
       return NextResponse.json(
-        { error: "OPENAI_API_KEY not configured. Add it to .env.local" },
+        { error: "GEMINI_API_KEY not configured. Add it to .env.local" },
         { status: 500 }
       );
     }
@@ -24,15 +24,12 @@ export async function POST(req: NextRequest) {
       ? `\nThe user also provided these values they could read from the label (use to validate or fill in): ${knownValues}`
       : "";
 
-    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        {
-          role: "user",
-          content: `You are a nutrition database. Look up the product "${productName}" and return its typical per-serving nutrition info. Use your knowledge of real branded products.${hints}
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
-Return ONLY valid JSON in this exact format, no other text:
+    const prompt = `You are a nutrition database. Look up the product "${productName}" and return its typical per-serving nutrition info. Use your knowledge of real branded products.${hints}
+
+Return ONLY valid JSON in this exact format, with no extra text, code fences, or explanation:
 {
   "productName": "string (format: BRAND :: FLAVOR/PRODUCT)",
   "servingSize": "string (e.g. 60g (1 bar) or 240ml (1 cup))",
@@ -48,13 +45,13 @@ Return ONLY valid JSON in this exact format, no other text:
   "cholesterol": number
 }
 
-Use 0 for values you cannot find. Be accurate for known products. If the product is obscure, provide best-estimate typical values for that product type.`,
-        },
-      ],
-      max_tokens: 500,
-    });
+Use 0 for values you cannot find. Be accurate for known products. If the product is obscure, provide best-estimate typical values for that product type.`;
 
-    const content = response.choices[0]?.message?.content?.trim();
+    const geminiResult = await model.generateContent([
+      { text: prompt },
+    ]);
+
+    const content = geminiResult.response.text().trim();
     if (!content) {
       return NextResponse.json(
         { error: "No response from AI" },
@@ -98,12 +95,13 @@ Use 0 for values you cannot find. Be accurate for known products. If the product
     console.error("Product lookup error:", err);
     let message = "Lookup failed. Try again.";
     const errObj = err as { status?: number; message?: string };
+    const errObj = err as { status?: number; message?: string };
     const status = errObj?.status;
     const msg = (errObj?.message || err instanceof Error ? (err as Error).message : "")?.toLowerCase();
     if (status === 401 || msg?.includes("invalid") || msg?.includes("incorrect api key")) {
-      message = "Invalid API key. Add OPENAI_API_KEY in Vercel → Settings → Environment Variables, then redeploy.";
+      message = "Invalid API key. Add GEMINI_API_KEY in Vercel → Settings → Environment Variables, then redeploy.";
     } else if (status === 429 || msg?.includes("rate")) {
-      message = "Rate limit exceeded. Wait a moment and try again.";
+      message = "Rate limit exceeded or quota exceeded. Check your Gemini project limits.";
     } else if (err instanceof Error) {
       message = err.message;
     }
