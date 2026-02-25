@@ -1,0 +1,10 @@
+var R=require("../../../chunks/[turbopack]_runtime.js")("server/app/api/analyze-label/route.js")
+R.c("server/chunks/bfd5c_formdata-node_lib_esm_fileFromPath_a0f204a1.js")
+R.c("server/chunks/75973_next_e1154916._.js")
+R.c("server/chunks/6969b_openai_9591a8a6._.js")
+R.c("server/chunks/bcdff_tr46_f2ec906a._.js")
+R.c("server/chunks/node_modules__pnpm_23134c9e._.js")
+R.c("server/chunks/[root-of-the-server]__af434f29._.js")
+R.c("server/chunks/_next-internal_server_app_api_analyze-label_route_actions_6000af5a.js")
+R.m("[project]/node_modules/.pnpm/next@16.1.6_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/esm/build/templates/app-route.js { INNER_APP_ROUTE => \"[project]/app/api/analyze-label/route.ts [app-route] (ecmascript)\" } [app-route] (ecmascript)")
+module.exports=R.m("[project]/node_modules/.pnpm/next@16.1.6_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/esm/build/templates/app-route.js { INNER_APP_ROUTE => \"[project]/app/api/analyze-label/route.ts [app-route] (ecmascript)\" } [app-route] (ecmascript)").exports

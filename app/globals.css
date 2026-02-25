@@ -1,0 +1,231 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 4%;
+    --foreground: 0 0% 92%;
+    --card: 0 0% 6%;
+    --card-foreground: 0 0% 92%;
+    --popover: 0 0% 6%;
+    --popover-foreground: 0 0% 92%;
+    --primary: 120 100% 55%;
+    --primary-foreground: 0 0% 2%;
+    --secondary: 0 0% 10%;
+    --secondary-foreground: 0 0% 85%;
+    --muted: 0 0% 10%;
+    --muted-foreground: 0 0% 55%;
+    --accent: 345 100% 50%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 345 100% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 14%;
+    --input: 0 0% 12%;
+    --ring: 120 100% 55%;
+    --chart-1: 120 100% 55%;
+    --chart-2: 345 100% 50%;
+    --chart-3: 195 100% 50%;
+    --chart-4: 45 100% 50%;
+    --chart-5: 270 80% 60%;
+    --radius: 0rem;
+    --sidebar-background: 0 0% 4%;
+    --sidebar-foreground: 0 0% 92%;
+    --sidebar-primary: 120 100% 55%;
+    --sidebar-primary-foreground: 0 0% 2%;
+    --sidebar-accent: 0 0% 10%;
+    --sidebar-accent-foreground: 0 0% 92%;
+    --sidebar-border: 0 0% 14%;
+    --sidebar-ring: 120 100% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* ========== DANGEROUS UI EFFECTS ========== */
+
+/* Scanline overlay */
+.scanlines::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 255, 50, 0.015) 2px,
+    rgba(0, 255, 50, 0.015) 4px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Neon glow text */
+.neon-green {
+  text-shadow: 0 0 7px hsl(120 100% 55%), 0 0 20px hsl(120 100% 55% / 0.5),
+    0 0 40px hsl(120 100% 55% / 0.2);
+}
+
+.neon-red {
+  text-shadow: 0 0 7px hsl(345 100% 50%), 0 0 20px hsl(345 100% 50% / 0.5),
+    0 0 40px hsl(345 100% 50% / 0.2);
+}
+
+/* Glow border */
+.glow-border {
+  box-shadow: 0 0 5px hsl(120 100% 55% / 0.15),
+    inset 0 0 5px hsl(120 100% 55% / 0.05);
+}
+
+.glow-border-red {
+  box-shadow: 0 0 5px hsl(345 100% 50% / 0.2),
+    inset 0 0 5px hsl(345 100% 50% / 0.05);
+}
+
+/* Grid background */
+.grid-bg {
+  background-image: linear-gradient(
+      hsl(120 100% 55% / 0.03) 1px,
+      transparent 1px
+    ),
+    linear-gradient(90deg, hsl(120 100% 55% / 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Flicker animation */
+@keyframes flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  93% {
+    opacity: 0.3;
+  }
+  94% {
+    opacity: 1;
+  }
+  96% {
+    opacity: 0.5;
+  }
+  97% {
+    opacity: 1;
+  }
+}
+
+@keyframes pulse-neon {
+  0%,
+  100% {
+    box-shadow: 0 0 5px hsl(120 100% 55% / 0.3),
+      0 0 15px hsl(120 100% 55% / 0.15);
+  }
+  50% {
+    box-shadow: 0 0 10px hsl(120 100% 55% / 0.5),
+      0 0 30px hsl(120 100% 55% / 0.25);
+  }
+}
+
+@keyframes terminal-cursor {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes data-stream {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes glitch-h {
+  0% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-2px);
+  }
+  40% {
+    transform: translateX(2px);
+  }
+  60% {
+    transform: translateX(-1px);
+  }
+  80% {
+    transform: translateX(1px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.animate-flicker {
+  animation: flicker 4s infinite;
+}
+
+.animate-pulse-neon {
+  animation: pulse-neon 2s ease-in-out infinite;
+}
+
+.animate-terminal-cursor {
+  animation: terminal-cursor 1s step-end infinite;
+}
+
+.animate-glitch {
+  animation: glitch-h 0.3s ease-in-out;
+}
+
+/* Danger stripe pattern */
+.danger-stripe {
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 8px,
+    hsl(345 100% 50% / 0.06) 8px,
+    hsl(345 100% 50% / 0.06) 16px
+  );
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: hsl(0 0% 4%);
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(120 100% 55% / 0.3);
+  border-radius: 0;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(120 100% 55% / 0.5);
+}
