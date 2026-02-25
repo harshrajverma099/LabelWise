@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
       : "";
 
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const prompt = `You are a nutrition database. Look up the product "${productName}" and return its typical per-serving nutrition info. Use your knowledge of real branded products.${hints}
 

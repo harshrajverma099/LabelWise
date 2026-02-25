@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     }
 
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const prompt = `You are a nutrition label analyst. Analyze this product label image and extract the nutritional information.
 Return ONLY valid JSON in this exact format, with no extra text, code fences, or explanation:
