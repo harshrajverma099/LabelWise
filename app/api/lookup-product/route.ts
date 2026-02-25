@@ -95,7 +95,6 @@ Use 0 for values you cannot find. Be accurate for known products. If the product
     console.error("Product lookup error:", err);
     let message = "Lookup failed. Try again.";
     const errObj = err as { status?: number; message?: string };
-    const errObj = err as { status?: number; message?: string };
     const status = errObj?.status;
     const msg = (errObj?.message || err instanceof Error ? (err as Error).message : "")?.toLowerCase();
     if (status === 401 || msg?.includes("invalid") || msg?.includes("incorrect api key")) {
