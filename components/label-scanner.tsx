@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 
-const SCAN_URL = "https://vm-rg49lea2yneex3xup5do73.vusercontent.net";
+const SCAN_URL = "https://label-scanner.vercel.app/";
 
 export function LabelScanner() {
   return (
